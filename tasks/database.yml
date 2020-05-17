@@ -1,0 +1,27 @@
+---
+
+- name: Install flask
+  package:
+    name: python-flask
+    state: present
+
+- name: Start mysql
+  service:
+    name: mysql
+    state: started
+
+- name: Collect all possible information using passwordless root access
+  mysql_info:
+    login_user: root
+
+- name: Get MySQL version with non-default credentials
+  mysql_info:
+    login_user: root
+    login_password: root
+    filter: version
+
+- name: Create a new database with name 'malekDB'
+  mysql_db:
+    name: malekDB
+    state: present
+

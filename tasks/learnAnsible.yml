@@ -1,0 +1,48 @@
+---
+
+- name: Network Getting Started First Playbook
+  gather_facts: true
+  hosts: all
+  tasks:
+    
+    - name: Install Nginx
+      package:
+         name: nginx
+         state: present
+      become: true
+
+    - name: Run shell command
+      shell:
+         cmd: echo "malek" >> ~/testing.txt
+
+    - name: Start nginx
+      service: 
+          name: nginx
+          state: started
+      become: true
+
+    - name: Get the homepage
+      uri:
+        url: "http://{{ ansible_ssh_host }}"
+        return_content: yes
+        status_code: 200
+      register: homepage
+
+    - name: Assert content of the homepage
+      assert:
+            that:
+              - "'Welcome to nginx!' in homepage.content"
+
+    - name: Get the homepage of Google
+      uri:
+        url: "http://www.google.com"
+        return_content: yes
+        status_code: 200
+      register: google
+
+    - name: Assert content of the homepage
+      assert:
+            that:
+              - "'Gmail' in google.content"
+
+  

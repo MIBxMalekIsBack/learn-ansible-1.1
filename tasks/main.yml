@@ -1,48 +1,17 @@
 ---
 
-- name: Network Getting Started First Playbook
+- hosts: all
+  strategy: debug
   gather_facts: true
-  hosts: all
+  become: true
   tasks:
-    
-    - name: Install Nginx
-      package:
-         name: nginx
-         state: present
-      become: true
 
-    - name: Run shell command
-      shell:
-         cmd: echo "malek" >> ~/testing.txt
+     - name: Include installation playbook of Flask and MySQL
+       include: database.yml
 
-    - name: Start nginx
-      service: 
-          name: nginx
-          state: started
-      become: true
+  post_tasks:
+     - name: Verify
+       include: verify.yml
 
-    - name: Get the homepage
-      uri:
-        url: "http://{{ ansible_ssh_host }}"
-        return_content: yes
-        status_code: 200
-      register: homepage
-
-    - name: Assert content of the homepage
-      assert:
-            that:
-              - "'Welcome to nginx!' in homepage.content"
-
-    - name: Get the homepage of Google
-      uri:
-        url: "http://www.google.com"
-        return_content: yes
-        status_code: 200
-      register: google
-
-    - name: Assert content of the homepage
-      assert:
-            that:
-              - "'Gmail' in google.content"
-
-  
+  roles:
+     - geerlingguy.mysql

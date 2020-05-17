@@ -1,0 +1,13 @@
+---
+
+- name: Check mysql config exist
+  stat:
+    path: etc/mysql/my.cnf
+  register: file_to_exist
+
+- name: Database exists
+  mysql_db:
+    name: malekDB
+    state: present
+  register: database_exists
+
